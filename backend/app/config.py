@@ -2,9 +2,13 @@
 Configuration and settings for the Agentic AI Application backend
 """
 import os
+from pathlib import Path
 from dotenv import load_dotenv
 
-load_dotenv()
+# Load .env from backend directory (regardless of where script is run from)
+backend_dir = Path(__file__).resolve().parent.parent
+env_file = backend_dir / ".env"
+load_dotenv(env_file)
 
 
 class Settings:
