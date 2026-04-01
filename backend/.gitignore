@@ -32,6 +32,3 @@ build/
 
 # Logs
 *.log
-
-# Project specific
-node_modules/

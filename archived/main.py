@@ -143,10 +143,10 @@ def export_readme(state: AgentState):
 
     readme_content = completion.choices[0].message.content
 
-    with open("blogify.md", "w", encoding="utf-8") as f:
+    with open("DEMENTIA.md", "w", encoding="utf-8") as f:
         f.write(readme_content)
 
-    print("\n✅ blogify.md file generated successfully as 'GENERATED_README.md'")
+    print("\n✅ DEMENTIA.md file generated successfully as 'GENERATED_README.md'")
     return {"readme_content": readme_content}
 
 def export_readme_hf(state: AgentState):
@@ -217,4 +217,4 @@ graph.add_edge("Export_README", END)
 app = graph.compile()
 
 
-app.invoke({"repo_url" : "https://github.com/limmaXD/Project_Hazel"}, {"recursion_limit": 100})
+app.invoke({"repo_url" : "https://github.com/Team-XPredators/Dementia-Prediction-xpredators/"}, {"recursion_limit": 100})

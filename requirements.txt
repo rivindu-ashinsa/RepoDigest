@@ -1,3 +1,8 @@
-requests
-beautifulsoup4
-openai
+# Application dependencies are managed per component
+# 
+# Backend dependencies: see backend/requirements.txt
+# Frontend dependencies: see frontend/package.json (when implemented)
+#
+# To install backend dependencies:
+#   cd backend
+#   pip install -r requirements.txt
