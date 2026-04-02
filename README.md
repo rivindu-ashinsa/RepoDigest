@@ -81,6 +81,8 @@ python -m http.server 5500
 
 Frontend URL: `http://127.0.0.1:5500`
 
+For local development, the frontend reads its API base URL from `frontend/config.js`.
+
 ## API Endpoints
 
 - `GET /api/health`
@@ -136,8 +138,10 @@ Tune these in `backend/.env`:
 ## Deployment Notes
 
 - Frontend is static and can be deployed on GitHub Pages
-- Backend should be deployed separately (Render/Railway/Fly.io/etc.)
-- Set frontend backend URL to your deployed API base URL
+- Backend should be deployed separately on Render (or similar)
+- Update `frontend/config.js` so `API_BASE_URL` points to your deployed backend URL
+- If you use GitHub Pages, the frontend must call the Render URL over HTTPS
+- A GitHub Actions workflow is included at `.github/workflows/deploy-pages.yml`
 
 ## License
 
