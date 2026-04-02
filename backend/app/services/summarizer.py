@@ -2,7 +2,6 @@
 LLM-based code summarization service
 Uses OpenRouter or HuggingFace APIs for summarizing code files
 """
-import os
 from openai import OpenAI
 from ..config import settings
 
@@ -38,6 +37,10 @@ Guidelines:
 
 File:
 """
+
+    def _prepare_content(self, file_content: str) -> str:
+        """Trim content to a safe token budget before sending to the LLM."""
+        return file_content[:settings.MAX_FILE_CONTENT_CHARS]
     
     def __init__(self, use_hf: bool = False):
         """
@@ -74,7 +77,8 @@ File:
         Returns:
             Summary as JSON string
         """
-        message_content = f"File name: {file_path}\n\n{file_content}"
+        prepared_content = self._prepare_content(file_content)
+        message_content = f"File name: {file_path}\n\n{prepared_content}"
         
         try:
             completion = self.client.chat.completions.create(
@@ -85,6 +89,8 @@ File:
                         "content": self.SUMMARY_EXTRACTION_PROMPT + message_content
                     }
                 ],
+                max_tokens=settings.SUMMARIZER_MAX_OUTPUT_TOKENS,
+                temperature=0.2,
                 **(self._get_extra_params() if not self.use_hf else {})
             )
             return completion.choices[0].message.content

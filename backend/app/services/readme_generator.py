@@ -38,6 +38,23 @@ Here are the summarized file details:
 
 Generate the README now.
 """
+
+    def _prepare_summaries_text(self, summaries: List[str]) -> str:
+        """Bound the total summary payload to prevent over-budget requests."""
+        cleaned = [s for s in summaries if s and "\"error\"" not in s.lower()]
+        if not cleaned:
+            cleaned = summaries
+
+        collected: List[str] = []
+        used_chars = 0
+        for item in cleaned:
+            item_len = len(item)
+            if used_chars + item_len > settings.README_MAX_SUMMARY_CHARS:
+                break
+            collected.append(item)
+            used_chars += item_len
+
+        return "\n\n".join(collected)
     
     def __init__(self, use_hf: bool = False):
         """
@@ -73,13 +90,15 @@ Generate the README now.
         Returns:
             Generated README content
         """
-        summaries_text = "\n\n".join(summaries)
+        summaries_text = self._prepare_summaries_text(summaries)
         prompt = self.README_PROMPT_TEMPLATE.format(summaries_text=summaries_text)
         
         try:
             completion = self.client.chat.completions.create(
                 model=self.model,
                 messages=[{"role": "user", "content": prompt}],
+                max_tokens=settings.README_MAX_OUTPUT_TOKENS,
+                temperature=0.2,
                 **(self._get_extra_params() if not self.use_hf else {})
             )
             return completion.choices[0].message.content

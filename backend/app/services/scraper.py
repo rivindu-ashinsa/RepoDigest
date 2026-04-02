@@ -69,6 +69,30 @@ def compress_python_code(code: str) -> str:
     return "\n\n".join([block for block in compressed if block.strip() != ""])
 
 
+def compress_generic_text(text: str, max_chars: int) -> str:
+    """Compress non-Python text to keep only high-signal content under a strict budget."""
+    text = re.sub(r"\n{3,}", "\n\n", text)
+    text = text.strip()
+    return text[:max_chars]
+
+
+def should_include_file(path: str, name: str, ext: str) -> bool:
+    """Decide if a file should be sent to the LLM pipeline."""
+    lower_path = f"/{path.lower()}"
+    lower_name = name.lower()
+
+    if any(fragment in lower_path for fragment in settings.SKIP_PATH_CONTAINS):
+        return False
+    if any(pattern in lower_name for pattern in settings.SKIP_FILE_PATTERNS):
+        return False
+
+    if lower_name in settings.INCLUDE_FILENAMES:
+        return True
+    if ext in settings.INCLUDE_EXTENSIONS:
+        return True
+    return False
+
+
 def fetch_repo_code(repo_url: str) -> List[Dict[str, str]]:
     """
     Fetch all relevant files from a GitHub repository.
@@ -110,6 +134,7 @@ def fetch_repo_code(repo_url: str) -> List[Dict[str, str]]:
         for item in r.json():
             name = item["name"]
             ext = os.path.splitext(name)[1]
+            item_path = item.get("path", "")
 
             # Skip useless dirs/files
             if item["type"] == "dir" and name in settings.SKIP_DIRECTORIES:
@@ -118,14 +143,23 @@ def fetch_repo_code(repo_url: str) -> List[Dict[str, str]]:
                 continue
             if item["type"] == "file" and item.get("size", 0) > settings.MAX_FILE_SIZE:
                 continue
+            if item["type"] == "file" and not should_include_file(item_path, name, ext):
+                continue
 
             if item["type"] == "file":
+                if len(files) >= settings.MAX_FILES_TO_SUMMARIZE:
+                    break
                 try:
                     text = requests.get(item["download_url"], headers=headers, timeout=10).text
 
-                    # Compress Python files only
+                    # Keep only high-signal sections to reduce token usage.
                     if ext == ".py":
                         text = compress_python_code(text)
+                    else:
+                        text = compress_generic_text(text, settings.MAX_FILE_CONTENT_CHARS)
+
+                    if len(text) > settings.MAX_FILE_CONTENT_CHARS:
+                        text = text[:settings.MAX_FILE_CONTENT_CHARS]
 
                     files.append({"path": item["path"], "content": text})
 
