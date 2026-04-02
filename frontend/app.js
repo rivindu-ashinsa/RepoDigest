@@ -1,5 +1,6 @@
+const API_BASE = "http://127.0.0.1:8000";
+
 const form = document.getElementById("generate-form");
-const apiBaseInput = document.getElementById("api-base");
 const repoUrlInput = document.getElementById("repo-url");
 const useHfInput = document.getElementById("use-hf");
 const generateBtn = document.getElementById("generate-btn");
@@ -44,8 +45,7 @@ function renderMarkdown(markdownText) {
 }
 
 async function generateReadmeStream(payload) {
-  const base = apiBaseInput.value.trim().replace(/\/$/, "");
-  const response = await fetch(`${base}/api/generate-readme-stream`, {
+  const response = await fetch(`${API_BASE}/api/generate-readme-stream`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(payload),
