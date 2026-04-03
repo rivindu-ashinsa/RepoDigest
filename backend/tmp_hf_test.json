@@ -1,0 +1,5 @@
+{
+  "model": "Qwen/Qwen2.5-Coder-32B-Instruct",
+  "messages": [{"role":"user","content":"Reply with OK"}],
+  "max_tokens": 16
+}

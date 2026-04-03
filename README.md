@@ -94,7 +94,7 @@ For local development, the frontend reads its API base URL from `frontend/config
 ```json
 {
    "repo_url": "https://github.com/owner/repo",
-   "use_hf_model": false
+   "use_hf_model": true
 }
 ```
 
@@ -130,7 +130,8 @@ Tune these in `backend/.env`:
 - `GITHUB_TOKEN not set in environment`
    - Ensure `backend/.env` exists and has `GITHUB_TOKEN`
 - `API key not configured`
-   - Set `OPENROUTER_API_KEY` or `HF_TOKEN` in `backend/.env`
+   - Set `HF_TOKEN` in `backend/.env` (default path)
+   - Optional fallback: set `OPENROUTER_API_KEY` and send `use_hf_model: false`
 - `402` from OpenRouter (credits/token budget)
    - Lower token/file limits in `backend/.env`
    - Or switch to Hugging Face model in UI

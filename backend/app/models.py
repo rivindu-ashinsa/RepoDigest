@@ -8,13 +8,13 @@ from pydantic import BaseModel, HttpUrl
 class GenerateReadmeRequest(BaseModel):
     """Request model for README generation endpoint"""
     repo_url: str
-    use_hf_model: bool = False  # Use HuggingFace model instead of OpenRouter
+    use_hf_model: bool = True  # Default to HuggingFace model
     
     class Config:
         json_schema_extra = {
             "example": {
                 "repo_url": "https://github.com/username/repo",
-                "use_hf_model": False
+                "use_hf_model": True
             }
         }
 

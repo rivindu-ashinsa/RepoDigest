@@ -131,13 +131,13 @@ POST /api/generate-readme
 ```json
 {
   "repo_url": "https://github.com/username/repository",
-  "use_hf_model": false
+  "use_hf_model": true
 }
 ```
 
 **Parameters:**
 - `repo_url` (required): Full GitHub repository URL
-- `use_hf_model` (optional): Use HuggingFace model instead of OpenRouter (default: false)
+- `use_hf_model` (optional): Use HuggingFace model instead of OpenRouter (default: true)
 
 **Response (on success):**
 ```json
@@ -163,7 +163,7 @@ curl -X POST "http://127.0.0.1:8000/api/generate-readme" \
   -H "Content-Type: application/json" \
   -d '{
     "repo_url": "https://github.com/owner/repo",
-    "use_hf_model": false
+    "use_hf_model": true
   }'
 ```
 
@@ -175,7 +175,7 @@ import requests
 url = "http://127.0.0.1:8000/api/generate-readme"
 payload = {
     "repo_url": "https://github.com/owner/repo",
-    "use_hf_model": False
+    "use_hf_model": True
 }
 
 response = requests.post(url, json=payload)
@@ -195,8 +195,9 @@ All configuration is managed through the `.env` file. See `.env.example` for all
 
 **Key Variables:**
 - `GITHUB_TOKEN`: Required for accessing private repositories
-- `OPENROUTER_API_KEY`: Required if using OpenRouter (default)
-- `HF_TOKEN`: Required if using HuggingFace models
+- `HF_TOKEN`: Required for default HuggingFace generation
+- `HF_MODEL`: Recommended `Qwen/Qwen2.5-Coder-32B-Instruct` for code-heavy repositories
+- `OPENROUTER_API_KEY`: Optional fallback if you choose OpenRouter (`use_hf_model=false`)
 - `DEBUG`: Set to `True` for development, `False` for production
 - `HOST`: Server host (default: 127.0.0.1)
 - `PORT`: Server port (default: 8000)

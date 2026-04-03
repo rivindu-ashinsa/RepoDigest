@@ -5,23 +5,24 @@ import os
 from pathlib import Path
 from dotenv import load_dotenv
 
-# Load .env from backend directory (regardless of where script is run from)
+# Load .env from backend directory (regardless of where script is run from).
+# override=True ensures backend/.env wins over stale shell-level env vars.
 backend_dir = Path(__file__).resolve().parent.parent
 env_file = backend_dir / ".env"
-load_dotenv(env_file)
+load_dotenv(env_file, override=True)
 
 
 class Settings:
     """Application settings loaded from environment variables"""
     
     # API Keys
-    OPENROUTER_API_KEY: str = os.getenv("OPENROUTER_API_KEY", "")
+    OPENROUTER_API_KEY: str = os.getenv("OPENROUTER_API_KEY", "").strip()
     GITHUB_TOKEN: str = os.getenv("GITHUB_TOKEN", "")
-    HF_TOKEN: str = os.getenv("HF_TOKEN", "")
+    HF_TOKEN: str = os.getenv("HF_TOKEN", os.getenv("HUGGINGFACE_API_KEY", "")).strip()
     
     # LLM Models
-    OPENROUTER_MODEL: str = os.getenv("OPENROUTER_MODEL", "x-ai/grok-code-fast-1")
-    HF_MODEL: str = os.getenv("HF_MODEL", "deepseek-ai/DeepSeek-V3.2-Exp:novita")
+    OPENROUTER_MODEL: str = os.getenv("OPENROUTER_MODEL", "x-ai/grok-code-fast-1").strip()
+    HF_MODEL: str = os.getenv("HF_MODEL", "Qwen/Qwen2.5-Coder-32B-Instruct").strip()
     
     # API Configuration
     OPENROUTER_BASE_URL: str = "https://openrouter.ai/api/v1"
